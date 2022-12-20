@@ -13,7 +13,6 @@ class TaskList: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var sortAscending = true
-    
     private var statuses = [[Task]]() {
         didSet {
             tableView.reloadData()
@@ -21,11 +20,10 @@ class TaskList: UIViewController {
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()        
+        super.viewDidLoad()
         tableView.dataSource = self
         title = "Tasks"
         loadData()
-        
         sortData(true)
     }
     
@@ -34,49 +32,40 @@ class TaskList: UIViewController {
     }
     
     func sortData(_ sortAscending: Bool) {
+        var sortedGroup = [[Task]]()
         if sortAscending {
-           
-            navigationItem.rightBarButtonItem?.title = "Ascending"
+            for array in statuses {
+                let newGroup =  array.sorted { $0.dueDate < $1.dueDate }
+                sortedGroup.append(newGroup)
+                statuses = sortedGroup
+                navigationItem.rightBarButtonItem?.title = "Descending"
+            }
         } else {
-        
-            navigationItem.rightBarButtonItem?.title = "Descending"
+            for array in statuses {
+                let newGroup = array.sorted { $0.dueDate > $1.dueDate}
+                sortedGroup.append(newGroup)
+                statuses = sortedGroup
+                navigationItem.rightBarButtonItem?.title = "Ascending"
+            }
         }
-        
     }
-        
-        
-    
     
     @IBAction func sortButtonTapped(_ sender: UIBarButtonItem) {
         sortAscending.toggle()
         sortData(sortAscending)
-
     }
-    
 }
 
 extension TaskList: UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return statuses.count
     }
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sectionName: String
-        if section == 0 {
-            sectionName = "Not Started"
-        } else if section == 1 {
-            sectionName = "In Progress"
-        } else {
-            sectionName = "Completed"
-        }
-        return sectionName
+        return statuses[section].first?.status.rawValue
     }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return statuses[section].count
     }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
         let task = statuses[indexPath.section][indexPath.row]
@@ -88,6 +77,5 @@ extension TaskList: UITableViewDataSource {
         cell.contentConfiguration = cellContent
         return cell
     }
-    
 }
 
