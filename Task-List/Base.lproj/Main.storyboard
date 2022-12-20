@@ -56,7 +56,13 @@
                             <constraint firstItem="xQ9-ei-atH" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="pvF-6b-WZk"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="L41-R6-brh"/>
+                    <navigationItem key="navigationItem" id="L41-R6-brh">
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="Sgl-g9-lah">
+                            <connections>
+                                <action selector="sortButtonTapped:" destination="BYZ-38-t0r" id="WyL-w9-tZH"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="xQ9-ei-atH" id="AM2-45-xNZ"/>
                     </connections>

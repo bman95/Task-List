@@ -8,10 +8,10 @@
 import Foundation
 
 struct Task {
-    enum Status {
-        case notStarted
-        case inProgress
-        case completed
+    enum Status: Int {
+        case notStarted = 0
+        case inProgress = 1
+        case completed = 2
     }
     
     let name: String
@@ -72,6 +72,30 @@ struct Task {
     }
     
     
-    // section function will be written below 
-
+    // section function will be written below
+    
+    static func taskSections() -> [[Task]] {
+        
+        let sortedStatuses = allTasks.sorted { $0.status.rawValue < $1.status.rawValue }
+        let uniqueStatuses = Set(sortedStatuses.map { $0.status.rawValue })
+        
+        // creates 3 arrays containing which should contain [[notStarted], [inProgress], [Completed]]
+        var sectionsArray = Array(repeating: [Task](), count: uniqueStatuses.count)
+        
+        var currentIndex = 0 // this variable represents the first array within the sectionsArray [[0], [1], [2]]
+        var currentTaskStatus = sortedStatuses.first?.status.rawValue
+        
+        for status in sortedStatuses {
+            if status.status.rawValue == currentTaskStatus {
+                sectionsArray[currentIndex].append(status)
+            } else {
+                currentIndex += 1
+                currentTaskStatus = status.status.rawValue
+                sectionsArray[currentIndex].append(status)
+            }
+        }
+        
+        return sectionsArray
+    }
 }
+

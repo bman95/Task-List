@@ -12,19 +12,44 @@ class TaskList: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    // later we may change the value of tasks based on what we want to do (i.e sort)
-    private var tasks = Task.allTasks
+    private var sortAscending = true
     
-   
-
+    private var statuses = [[Task]]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()        
         tableView.dataSource = self
         title = "Tasks"
-
+        loadData()
         
-        print("There are \(Task.allTasks.count) tasks in our struct")
+        sortData(true)
+    }
+    
+    func loadData() {
+        statuses = Task.taskSections()
+    }
+    
+    func sortData(_ sortAscending: Bool) {
+        if sortAscending {
+           
+            navigationItem.rightBarButtonItem?.title = "Ascending"
+        } else {
+        
+            navigationItem.rightBarButtonItem?.title = "Descending"
+        }
+        
+    }
+        
+        
+    
+    
+    @IBAction func sortButtonTapped(_ sender: UIBarButtonItem) {
+        sortAscending.toggle()
+        sortData(sortAscending)
 
     }
     
@@ -32,13 +57,29 @@ class TaskList: UIViewController {
 
 extension TaskList: UITableViewDataSource {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return statuses.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionName: String
+        if section == 0 {
+            sectionName = "Not Started"
+        } else if section == 1 {
+            sectionName = "In Progress"
+        } else {
+            sectionName = "Completed"
+        }
+        return sectionName
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tasks.count
+        return statuses[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
-        let task = tasks[indexPath.row]
+        let task = statuses[indexPath.section][indexPath.row]
         
         // cell configuration
         var cellContent = cell.defaultContentConfiguration()
@@ -47,5 +88,6 @@ extension TaskList: UITableViewDataSource {
         cell.contentConfiguration = cellContent
         return cell
     }
+    
 }
 
